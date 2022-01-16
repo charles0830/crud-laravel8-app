@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,13 @@ Route::get('/', function () {
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
+Route::get('/admin/users', [UserController::class, 'index'])->name('users.index');//->middleware('auth:admin')
+
+Route::group(['middleware' => 'auth'], function(){
+    Route::resource(name: 'users', controller: \App\Http\Controllers\UserController::class);
+});
+
+Route::get('/admin/sessions', function () { 
+    return view('admin.sessions.index');
+})->middleware('auth:admin')->name('sessions.list');
