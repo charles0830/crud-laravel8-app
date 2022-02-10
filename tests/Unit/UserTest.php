@@ -114,5 +114,120 @@ class UserTest extends TestCase
         // $this->assertEquals(0, \App\Models\User::count());
     }
 
+
+   
+    /**
+     * Test if user admin can see the user list       
+     * @test
+     */
+    public function verify_if_user_admin_can_see_user_list() {
+        $permission_name = "user_access";
+        $user = \App\Models\User::factory()->create();
+        $role = \App\Models\Role::create(['title' => 'Admin']);
+        $user->roles()->attach($role->id);
+        $permission = \App\Models\Permission::create(['title' => $permission_name]);
+        $role->permissions()->sync($permission->id); 
+
+        $this->actingAs($user);
+
+        $this->get(route('users.index'))
+        ->see('Users List')           
+        ->assertResponseStatus(200);
+    }
+
+     /**
+     * Verify if user admin can be change the role of user
+     * @test
+     */
+    public function verify_if_user_admin_can_change_the_role_of_user() {
+        $permission_name = "user_access";
+        $userAdmin = \App\Models\User::factory()->create();
+        $role = \App\Models\Role::create(['title' => 'Admin']);
+        $userAdmin->roles()->attach($role->id);
+        $permission = \App\Models\Permission::create(['title' => $permission_name]);
+        $role->permissions()->sync($permission->id); 
+
+        $this->actingAs($userAdmin);
+
+        $userToChangeRole = \App\Models\User::factory()->create();
+        $role = \App\Models\Role::create(['title' => 'User']);
+        $userToChangeRole->roles()->attach($role->id);
+
+        $this->put(route('users.update',$userToChangeRole->id),['roles' => ['role_id' => $role->id]])
+            ->assertResponseStatus(302);
+
+        $this->assertEquals('User', $userToChangeRole->roles->first()->title);
+    }    
+
+
+    /**
+     * Verify if user can be deleted for admin
+     * @test
+     */
+    public function verify_if_user_can_be_deleted_for_admin() {
+        $permission_name = "user_access";
+        $userAdmin = \App\Models\User::factory()->create();
+        $role = \App\Models\Role::create(['title' => 'Admin']);
+        $userAdmin->roles()->attach($role->id);
+        $permission = \App\Models\Permission::create(['title' => $permission_name]);
+        $role->permissions()->sync($permission->id); 
+
+        $this->actingAs($userAdmin);
+
+        $userToDelete = \App\Models\User::factory()->create();
+        $this->delete(route('users.destroy',$userToDelete->id))
+        ->assertResponseStatus(302);
+
+        $this->assertEquals(1, \App\Models\User::count());
+    } 
+
+ 
+    
+    /**
+     * Test if role admin can change user data
+     * @test
+     */
+    public function verify_if_admin_can_to_change_user_data() {
+        $permission_name = "user_access"; //access admin
+        $user = \App\Models\User::factory()->create();
+        $role = \App\Models\Role::create(['title' => 'Admin']);
+        $user->roles()->attach($role->id);
+        $permission = \App\Models\Permission::create(['title' => $permission_name]);
+        $role->permissions()->sync($permission->id); 
+        $this->actingAs($user);
+
+        $newName = 'John Lennon';
+        $userChangeName = \App\Models\User::factory()->create();
+        $this->put(route('users.update',$userChangeName->id),
+                [
+                    'name' => $newName,
+                    'email' => $userChangeName->email,
+                    'password' => $userChangeName->password,
+                    'roles' => ['role_id' => $role->id]
+                ]);  
+
+        $userChangedName = \App\Models\User::find($userChangeName->id);
+        $this->assertEquals($newName, $userChangedName->name);
+    }
+
+    /*
+    * The admin user can view access logs
+    * @test
+    */
+    public function verify_if_only_admin_can_see_view_access_logs()
+    {
+        $permission_name = "session_access";
+        $user = \App\Models\User::factory()->create();
+        $role = \App\Models\Role::create(['title' => 'Admin']);
+        $user->roles()->attach($role->id);
+        $permission = \App\Models\Permission::create(['title' => $permission_name]);
+        $role->permissions()->sync($permission->id); 
+
+        $this->actingAs($user);
+
+        $this->get(route('session.liveSessions'))
+        ->see('Browser Sessions')           
+        ->assertResponseStatus(200);
+    }  
     
 }

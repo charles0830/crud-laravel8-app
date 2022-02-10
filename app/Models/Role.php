@@ -21,4 +21,14 @@ class Role extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    /**
+     * Relantionships
+     * Many to Many
+     */
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class);
+    }
+  
 }

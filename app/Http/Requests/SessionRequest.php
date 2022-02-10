@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class UpdateSessionRequest extends FormRequest
 {
@@ -37,6 +38,7 @@ class UpdateSessionRequest extends FormRequest
      */
     public function authorize()
     {
+        return Gate::allows('session_access');
     }
 
 
