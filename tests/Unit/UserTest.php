@@ -94,9 +94,9 @@ class UserTest extends TestCase
     public function check_if_the_user_list_is_protected() {
         $this->assertGuest();
 
-        $this->visit(route('users.index'))
-        // ->assertResponseStatus(302);          
-        ->see('Log in');
+        $this->get(route('users.index'))
+        ->assertResponseStatus(403);          
+        // ->see('Log in');
     }
 
     /**
