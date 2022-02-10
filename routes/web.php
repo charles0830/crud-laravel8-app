@@ -1,18 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\SessionController;
 
 Route::get('/', function () {
     return view('welcome');
+})->name("root",);
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
+
+Route::resource(name: 'users', controller: \App\Http\Controllers\UserController::class);
+
+Route::get('/sessions', [SessionController::class, 'index'])->name('sessions.index');
+
+Route::get('/clear-cache', function() {
+    $configCache = Artisan::call('config:cache');
+    $clearCache = Artisan::call('cache:clear');
+    return "Cache cleared";
 });
