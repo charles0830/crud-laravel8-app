@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,13 +17,20 @@ use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name("root",);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
 
-Route::get('/admin/users', [UserController::class, 'index'])->name('users.index');//->middleware('auth:admin')
+//, 'role:admin'
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard'); 
+
+// Route::get('/admin/users', [UserController::class, 'index'])->name('users.index');//->middleware('auth:admin')
+
+Route::get('/admin/sessions', [SessionController::class, 'index'])->name('sessions.index');//->middleware('auth:admin')
 
 Route::group(['middleware' => 'auth'], function(){
     Route::resource(name: 'users', controller: \App\Http\Controllers\UserController::class);
