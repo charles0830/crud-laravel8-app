@@ -41,5 +41,4 @@ class UpdateSessionRequest extends FormRequest
         return Gate::allows('session_access');
     }
 
-
 }
