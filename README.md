@@ -42,10 +42,10 @@ php artisan key:generate
 # Create the database of Sqlite, except if to use other DB 
 touch database/database.sqlite
 
-# Run migration to create the tables of database
+# Run migration to create the tables of database - to run seed together [php artisan migrate::refresh --seed]
 php artisan migrate
 
-# Run Seed to create some data (roles...)
+# Run Seed to create some data (roles...) 
 php artisan db:seed
 ````
 
@@ -54,8 +54,8 @@ php artisan db:seed
 
 After, visit the following address: http://localhost
 
-To run Unit Test: `./vendor/bin/sail test`
+To run Unit Test: `./vendor/bin/sail test` or `php artisan test`
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
